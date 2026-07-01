@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import { anonClient } from '../../lib/supabase';
+
+const title = "Reformer Pilates Austin | Core & Flow Studio";
+const description = "Experience full-body toning with our Austin reformer pilates classes. Small groups, expert instructors—reserve your spot now.";
+const SITE = import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app';
+
+const sb = anonClient();
+let cls: any = null;
+if (sb) {
+  const { data } = await sb.from('classes').select('*').eq('slug', 'reformer-pilates').maybeSingle();
+  cls = data;
+}
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Reformer Pilates Classes',
+  description,
+  provider: { '@type': 'LocalBusiness', name: 'Core & Flow Pilates Studio' },
+  areaServed: { '@type': 'City', name: 'Austin' },
+};
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE + '/' },
+    { '@type': 'ListItem', position: 2, name: 'Classes', item: SITE + '/classes' },
+    { '@type': 'ListItem', position: 3, name: 'Reformer Pilates', item: SITE + '/classes/reformer-pilates' },
+  ],
+};
+
+function money(cents?: number, currency = 'usd') {
+  if (!cents) return '';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency.toUpperCase() }).format(cents / 100);
+}
+---
+
+<Base title={title} description={description} structuredData={[serviceSchema, breadcrumb]}>
+  <article class="mx-auto max-w-3xl px-6 py-16 md:py-24">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">Reformer pilates</p>
+    <h1 class="mt-3 font-display text-4xl tracking-tight text-ink md:text-5xl">Reformer pilates classes</h1>
+    <p class="mt-6 text-lg leading-relaxed text-ink-muted">
+      Our <strong>reformer pilates classes in Austin</strong> run on six machines, six people, one instructor — the smallest ratio in the studio, by design. This is where the springs do the arguing and your job is just to stay controlled.
+    </p>
+
+    <div class="prose prose-lg mt-8 max-w-none leading-relaxed text-ink">
+      <p>
+        The reformer adds resistance in both directions — pulling and returning — which means your stabilizer muscles never get a break. It's lower-impact than most strength training but the burn by minute thirty is real. Expect footwork, long-box series, jackknife progressions, and rotational work most mat classes can't replicate.
+      </p>
+      <h2>Who it's for</h2>
+      <p>
+        Anyone who's taken a handful of mat classes and wants to add load, or anyone coming from running, cycling, or lifting who wants targeted mobility work. First-time-on-a-reformer clients: tell us when you book and Jamie will walk you through the straps and carriage before class starts.
+      </p>
+      <h2>What a class looks like</h2>
+      <p>
+        50 minutes, capped at 6 people so every machine gets checked. Early morning (6:00am) and mid-morning weekday slots, with weekend availability too. Grip socks required — the carriage moves fast and bare feet slip.
+      </p>
+      <h2>What you'll notice</h2>
+      <p>
+        Full-body definition without the joint impact of plyometric training — clients tell us their posture changes before their strength does. Many members pair two reformer sessions a week with one <a href="/classes/mat-pilates" class="text-clay underline underline-offset-4">mat pilates class</a> to keep mobility work in the mix.
+      </p>
+    </div>
+
+    <div class="mt-12 rounded-lg border border-line bg-white/50 p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm text-ink-muted">Duration</p>
+          <p class="font-display text-lg text-ink">{cls?.duration_minutes ?? 50} minutes</p>
+        </div>
+        <div>
+          <p class="text-sm text-ink-muted">Drop-in price</p>
+          <p class="font-display text-lg text-ink">{money(cls?.price_cents, cls?.currency) || '$38'}</p>
+        </div>
+        <div>
+          <p class="text-sm text-ink-muted">Class size</p>
+          <p class="font-display text-lg text-ink">Up to {cls?.capacity ?? 6}</p>
+        </div>
+        <a href="/book" class="rounded-full bg-clay px-6 py-3 text-sm font-medium text-paper transition hover:bg-clay-dark">Book reformer pilates</a>
+      </div>
+    </div>
+
+    <p class="mt-10 text-sm text-ink-muted">
+      Taught by <a href="/instructors/jamie-arnold" class="text-clay underline underline-offset-4">Jamie Arnold</a>, our studio director and reformer lead. See <a href="/pricing" class="text-clay underline underline-offset-4">class packages and pricing</a> or check the <a href="/schedule" class="text-clay underline underline-offset-4">full weekly schedule</a> for open times.
+    </p>
+  </article>
+</Base>

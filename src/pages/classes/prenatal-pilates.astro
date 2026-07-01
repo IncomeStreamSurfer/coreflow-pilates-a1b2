@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import { anonClient } from '../../lib/supabase';
+
+const title = "Prenatal Pilates Classes | Core & Flow Studio";
+const description = "Safe, supportive prenatal pilates classes in Austin designed for every trimester. Book your class online today.";
+const SITE = import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app';
+
+const sb = anonClient();
+let cls: any = null;
+if (sb) {
+  const { data } = await sb.from('classes').select('*').eq('slug', 'prenatal-pilates').maybeSingle();
+  cls = data;
+}
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Prenatal Pilates Classes',
+  description,
+  provider: { '@type': 'LocalBusiness', name: 'Core & Flow Pilates Studio' },
+  areaServed: { '@type': 'City', name: 'Austin' },
+};
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE + '/' },
+    { '@type': 'ListItem', position: 2, name: 'Classes', item: SITE + '/classes' },
+    { '@type': 'ListItem', position: 3, name: 'Prenatal Pilates', item: SITE + '/classes/prenatal-pilates' },
+  ],
+};
+
+function money(cents?: number, currency = 'usd') {
+  if (!cents) return '';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency.toUpperCase() }).format(cents / 100);
+}
+---
+
+<Base title={title} description={description} structuredData={[serviceSchema, breadcrumb]}>
+  <article class="mx-auto max-w-3xl px-6 py-16 md:py-24">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">Prenatal pilates</p>
+    <h1 class="mt-3 font-display text-4xl tracking-tight text-ink md:text-5xl">Prenatal pilates classes</h1>
+    <p class="mt-6 text-lg leading-relaxed text-ink-muted">
+      Our <strong>prenatal pilates classes in Austin</strong> are taught by a certified pre/postnatal specialist who modifies every single exercise in real time — for your trimester, your energy that day, your body.
+    </p>
+
+    <div class="prose prose-lg mt-8 max-w-none leading-relaxed text-ink">
+      <p>
+        Pregnancy changes your center of gravity, your breathing mechanics, and the load your pelvic floor and abdominal wall can safely take — often week to week. Priya has spent years working with OBs and physical therapists to build a class that adapts rather than applying one program to every trimester.
+      </p>
+      <h2>Who it's for</h2>
+      <p>
+        Any client cleared for exercise by their OB or midwife, whether this is your first pilates class ever or you're modifying an existing practice. We ask new clients to note their due date and any restrictions when booking so Priya can plan modifications ahead of class.
+      </p>
+      <h2>What a class looks like</h2>
+      <p>
+        55 minutes focused on pelvic floor coordination, safe core engagement (no supine work past the first trimester without modification), hip mobility, and upper-back strength to counter the forward pull of a growing belly. Capped at 8 so Priya can check in with everyone.
+      </p>
+      <h2>What you'll notice</h2>
+      <p>
+        Clients consistently tell us they feel steadier on their feet and less lower-back tension within a few weeks. Many stay on through postnatal recovery once cleared — ask Priya about the transition, or explore <a href="/classes/private-sessions" class="text-clay underline underline-offset-4">private sessions</a> for one-on-one postpartum programming.
+      </p>
+    </div>
+
+    <div class="mt-12 rounded-lg border border-line bg-white/50 p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm text-ink-muted">Duration</p>
+          <p class="font-display text-lg text-ink">{cls?.duration_minutes ?? 55} minutes</p>
+        </div>
+        <div>
+          <p class="text-sm text-ink-muted">Drop-in price</p>
+          <p class="font-display text-lg text-ink">{money(cls?.price_cents, cls?.currency) || '$30'}</p>
+        </div>
+        <div>
+          <p class="text-sm text-ink-muted">Class size</p>
+          <p class="font-display text-lg text-ink">Up to {cls?.capacity ?? 8}</p>
+        </div>
+        <a href="/book" class="rounded-full bg-clay px-6 py-3 text-sm font-medium text-paper transition hover:bg-clay-dark">Book prenatal pilates</a>
+      </div>
+    </div>
+
+    <p class="mt-10 text-sm text-ink-muted">
+      Taught by <a href="/instructors/priya-navarro" class="text-clay underline underline-offset-4">Priya Navarro</a>, our prenatal &amp; postnatal specialist. See <a href="/pricing" class="text-clay underline underline-offset-4">class packages and pricing</a> or check the <a href="/schedule" class="text-clay underline underline-offset-4">full weekly schedule</a> for open times.
+    </p>
+  </article>
+</Base>
