@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import { anonClient } from '../lib/supabase';
+import { safeHtml } from '../lib/sanitize';
+
+const SITE = import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app';
+const sb = anonClient();
+let page: any = null;
+let faqs: any[] = [];
+if (sb) {
+  const [{ data: p }, { data: f }] = await Promise.all([
+    sb.from('pages').select('title, meta_title, meta_description').eq('slug', 'faq').not('published_at', 'is', null).maybeSingle(),
+    sb.from('faqs').select('question, answer_html').eq('page_slug', 'faq').order('sort_order'),
+  ]);
+  page = p;
+  faqs = f ?? [];
+}
+
+const title = page?.meta_title || 'Pilates FAQs Austin | Core & Flow Studio';
+const description = page?.meta_description || 'Answers to common questions about booking pilates classes at Core & Flow Studio.';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer_html.replace(/<[^>]+>/g, '') },
+  })),
+};
+---
+
+<Base title={title} description={description} structuredData={faqSchema}>
+  <section class="mx-auto max-w-3xl px-6 py-16 md:py-24">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">FAQ</p>
+    <h1 class="mt-3 font-display text-4xl tracking-tight text-ink md:text-5xl">{page?.title || 'Frequently asked questions'}</h1>
+
+    <div class="mt-10 divide-y divide-line border-t border-line">
+      {faqs.map((f) => (
+        <div class="py-6">
+          <h2 class="font-display text-lg text-ink">{f.question}</h2>
+          <div class="prose prose-sm mt-2 max-w-none leading-relaxed text-ink-muted" set:html={safeHtml(f.answer_html)} />
+        </div>
+      ))}
+    </div>
+    {faqs.length === 0 && <p class="mt-8 text-ink-muted">FAQs are loading — check back shortly.</p>}
+
+    <p class="mt-10 text-sm text-ink-muted">
+      Still have a question? <a href="/contact" class="text-clay underline underline-offset-4">Contact the studio</a> or go straight to <a href="/book" class="text-clay underline underline-offset-4">booking a class</a>.
+    </p>
+  </section>
+</Base>
