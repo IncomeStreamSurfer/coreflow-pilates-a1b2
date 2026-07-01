@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", serif;
+  --font-body: "Work Sans", sans-serif;
+
+  --color-paper: #f7f3ec;
+  --color-ink: #2b2620;
+  --color-ink-muted: #6b6257;
+  --color-clay: #b5563a;
+  --color-clay-dark: #96432b;
+  --color-line: #e4dccd;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.prose :where(h2, h3) {
+  font-family: var(--font-display);
+}
