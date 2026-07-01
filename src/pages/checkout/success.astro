@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import { anonClient } from '../../lib/supabase';
+
+const title = "Booking confirmed | Core & Flow Studio";
+const description = "Your pilates class booking at Core & Flow Studio is confirmed.";
+
+const sessionId = Astro.url.searchParams.get('session_id') ?? '';
+const sb = anonClient();
+let booking: any = null;
+if (sb && sessionId) {
+  const { data } = await sb
+    .from('bookings')
+    .select('customer_name, spots, amount_paid_cents, currency, class_sessions(start_time, location, classes(name), instructors(name))')
+    .eq('stripe_session_id', sessionId)
+    .maybeSingle();
+  booking = data;
+}
+
+function money(cents?: number, currency = 'usd') {
+  if (!cents) return '';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency.toUpperCase() }).format(cents / 100);
+}
+
+const cs: any = booking ? (Array.isArray(booking.class_sessions) ? booking.class_sessions[0] : booking.class_sessions) : null;
+const cls: any = cs ? (Array.isArray(cs.classes) ? cs.classes[0] : cs.classes) : null;
+const instructor: any = cs ? (Array.isArray(cs.instructors) ? cs.instructors[0] : cs.instructors) : null;
+---
+
+<Base title={title} description={description} noindex={true}>
+  <section class="mx-auto max-w-2xl px-6 py-20 text-center md:py-32">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">Payment confirmed</p>
+    <h1 class="mt-3 font-display text-4xl tracking-tight text-ink md:text-5xl">You're all set!</h1>
+
+    {booking ? (
+      <div class="mt-10 rounded-lg border border-line bg-white/50 p-8 text-left">
+        <p class="font-display text-xl text-ink">{cls?.name}</p>
+        <p class="mt-1 text-sm text-ink-muted">
+          {cs?.start_time && new Date(cs.start_time).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })}
+        </p>
+        <p class="mt-1 text-sm text-ink-muted">with {instructor?.name} · {cs?.location}</p>
+        <div class="mt-4 flex justify-between border-t border-line pt-4 text-sm">
+          <span class="text-ink-muted">{booking.spots} spot{booking.spots > 1 ? 's' : ''}</span>
+          <span class="font-medium text-ink">{money(booking.amount_paid_cents, booking.currency)}</span>
+        </div>
+      </div>
+    ) : (
+      <p class="mt-8 text-ink-muted">Your payment went through — a confirmation email is on its way. If you don't see it in a few minutes, check spam or <a href="/contact" class="text-clay underline">contact us</a>.</p>
+    )}
+
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <a href="/schedule" class="rounded-full bg-clay px-6 py-3 text-sm font-medium text-paper transition hover:bg-clay-dark">View schedule</a>
+      <a href="/" class="text-sm font-medium text-ink underline decoration-line underline-offset-4 hover:text-clay">Back to home</a>
+    </div>
+  </section>
+</Base>

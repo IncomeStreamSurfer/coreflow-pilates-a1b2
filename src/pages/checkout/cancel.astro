@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const title = "Checkout cancelled | Core & Flow Studio";
+const description = "Your booking was not completed — no charge was made.";
+---
+
+<Base title={title} description={description} noindex={true}>
+  <section class="mx-auto max-w-xl px-6 py-20 text-center md:py-32">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">Checkout cancelled</p>
+    <h1 class="mt-3 font-display text-4xl tracking-tight text-ink md:text-5xl">No charge was made</h1>
+    <p class="mt-5 leading-relaxed text-ink-muted">
+      Your booking wasn't completed and you weren't charged. Whenever you're ready, your spot may still be available.
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <a href="/book" class="rounded-full bg-clay px-6 py-3 text-sm font-medium text-paper transition hover:bg-clay-dark">Try again</a>
+      <a href="/schedule" class="text-sm font-medium text-ink underline decoration-line underline-offset-4 hover:text-clay">View schedule</a>
+    </div>
+  </section>
+</Base>
