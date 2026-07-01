@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import { anonClient } from '../lib/supabase';
+
+const title = "Pilates Class Pricing | Core & Flow Studio";
+const description = "See drop-in and package pricing for mat, reformer, prenatal, barre, and private pilates classes at Core & Flow Studio in Austin.";
+const SITE = import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app';
+
+const sb = anonClient();
+let classes: any[] = [];
+if (sb) {
+  const { data } = await sb
+    .from('classes')
+    .select('slug, name, price_cents, currency, duration_minutes')
+    .not('published_at', 'is', null)
+    .order('sort_order');
+  classes = data ?? [];
+}
+
+function money(cents: number, currency: string) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency.toUpperCase() }).format(cents / 100);
+}
+
+const packages = [
+  { name: 'Single class', desc: 'Drop in whenever, priced per class type', price: 'See below' },
+  { name: '5-class pack', desc: 'Mix mat, reformer, barre, or prenatal — 10% off drop-in rate, valid 3 months', price: 'From $126' },
+  { name: '10-class pack', desc: 'Our most popular pack — 18% off drop-in rate, valid 6 months', price: 'From $229' },
+  { name: 'Unlimited monthly', desc: 'Unlimited mat, barre, and prenatal classes (reformer add-on available)', price: '$199/mo' },
+];
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE + '/' },
+    { '@type': 'ListItem', position: 2, name: 'Pricing', item: SITE + '/pricing' },
+  ],
+};
+---
+
+<Base title={title} description={description} structuredData={breadcrumb}>
+  <section class="mx-auto max-w-4xl px-6 py-16 md:py-24">
+    <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">Pricing</p>
+    <h1 class="mt-3 font-display text-4xl tracking-tight text-ink md:text-5xl">Class packages &amp; pricing</h1>
+    <p class="mt-5 max-w-2xl leading-relaxed text-ink-muted">
+      Pay per class or save with a pack — every option books instantly through our <a href="/book" class="text-clay underline underline-offset-4">online booking flow</a>. New clients: your first class is full price but fully refundable up to 12 hours before start time.
+    </p>
+  </section>
+
+  <section class="border-t border-line">
+    <div class="mx-auto max-w-4xl px-6 py-14">
+      <h2 class="font-display text-2xl text-ink">Drop-in rates by class</h2>
+      <div class="mt-6 divide-y divide-line rounded-lg border border-line bg-white/40">
+        {classes.map((c) => (
+          <div class="flex items-center justify-between px-5 py-4">
+            <div>
+              <p class="font-medium text-ink">{c.name}</p>
+              <p class="text-sm text-ink-muted">{c.duration_minutes} minutes</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <p class="font-display text-lg text-ink">{money(c.price_cents, c.currency)}</p>
+              <a href="/book" class="rounded-full bg-ink px-4 py-2 text-xs font-medium text-paper transition hover:bg-clay">Book</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-white/40">
+    <div class="mx-auto max-w-4xl px-6 py-14">
+      <h2 class="font-display text-2xl text-ink">Packages (ask at the front desk or by email)</h2>
+      <p class="mt-2 text-sm text-ink-muted">Packages are set up manually so we can tailor billing — email <a href="mailto:hello@coreflowpilates.com" class="text-clay underline">hello@coreflowpilates.com</a> or mention it at your first class.</p>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2">
+        {packages.map((p) => (
+          <div class="rounded-lg border border-line bg-paper p-6">
+            <p class="font-display text-lg text-ink">{p.name}</p>
+            <p class="mt-2 text-sm text-ink-muted">{p.desc}</p>
+            <p class="mt-4 text-sm font-medium text-clay">{p.price}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line">
+    <div class="mx-auto max-w-4xl px-6 py-14 text-sm text-ink-muted">
+      Have questions before booking? Read our <a href="/faq" class="text-clay underline underline-offset-4">frequently asked questions</a> or <a href="/contact" class="text-clay underline underline-offset-4">contact the studio</a> directly.
+    </div>
+  </section>
+</Base>
