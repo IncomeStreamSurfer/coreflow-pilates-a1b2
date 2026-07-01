@@ -1,0 +1,142 @@
+---
+import Base from '../layouts/Base.astro';
+
+const title = "Pilates Classes in Austin | Core & Flow Studio";
+const description = "Join Core & Flow Pilates Studio in Austin for mat, reformer, and prenatal classes. Book your first class online today.";
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Core & Flow Pilates Studio',
+  url: import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app',
+  description: 'Strengthen. Stretch. Shine.',
+};
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Core & Flow Pilates Studio',
+  url: import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app',
+  logo: (import.meta.env.PUBLIC_SITE_URL || 'https://coreflow-pilates.vercel.app') + '/favicon.svg',
+  sameAs: [],
+};
+
+const classTypes = [
+  { slug: 'mat-pilates', name: 'Mat Pilates', blurb: 'Bodyweight strength and control, on the floor.' },
+  { slug: 'reformer-pilates', name: 'Reformer Pilates', blurb: 'Full-body toning on the spring-loaded machine.' },
+  { slug: 'prenatal-pilates', name: 'Prenatal Pilates', blurb: 'Safe, supportive movement for every trimester.' },
+  { slug: 'barre-fusion', name: 'Barre Fusion', blurb: 'High-energy sculpting, ballet meets pilates.' },
+  { slug: 'private-sessions', name: 'Private Sessions', blurb: 'One-on-one attention, built around your goals.' },
+];
+---
+
+<Base title={title} description={description} structuredData={[websiteSchema, orgSchema]}>
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="mx-auto grid max-w-6xl gap-12 px-6 pb-20 pt-16 md:grid-cols-2 md:items-center md:pb-28 md:pt-24">
+      <div>
+        <p class="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-clay">South Congress · Austin, TX</p>
+        <h1 class="font-display text-5xl leading-[0.98] tracking-tight text-ink md:text-6xl">
+          Austin's boutique pilates studio
+        </h1>
+        <p class="mt-6 max-w-md text-lg leading-relaxed text-ink-muted">
+          Strengthen. Stretch. Shine. Mat, reformer, and prenatal classes led by certified instructors — book online in under a minute.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-5">
+          <a href="/book" class="rounded-full bg-clay px-7 py-3.5 text-sm font-medium text-paper transition hover:bg-clay-dark hover:-translate-y-0.5">
+            Book a class
+          </a>
+          <a href="/schedule" class="text-sm font-medium text-ink underline decoration-line underline-offset-4 transition hover:text-clay">
+            View this week's schedule
+          </a>
+        </div>
+        <p class="mt-10 text-sm text-ink-muted">
+          427 members strong · 5 certified instructors · classes 7 days a week
+        </p>
+      </div>
+      <div class="relative">
+        <div class="aspect-[4/5] w-full overflow-hidden rounded-lg border border-line">
+          <img
+            src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80"
+            alt="Instructor guiding a client through a reformer pilates exercise in a sunlit studio"
+            class="h-full w-full object-cover"
+            loading="eager"
+          />
+        </div>
+        <div class="absolute -bottom-6 -left-6 hidden max-w-[220px] rounded-lg border border-line bg-paper p-5 shadow-sm md:block">
+          <p class="font-display text-2xl text-clay">4.9<span class="text-base text-ink-muted">/5</span></p>
+          <p class="mt-1 text-xs text-ink-muted">from 183 verified reviews on Google</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Class types -->
+  <section class="border-t border-line bg-white/40">
+    <div class="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      <div class="max-w-2xl">
+        <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">What we teach</p>
+        <h2 class="mt-3 font-display text-3xl tracking-tight text-ink md:text-4xl">Five ways to move</h2>
+        <p class="mt-4 text-ink-muted leading-relaxed">
+          Every class at Core &amp; Flow is capped at a small group size so instructors can correct form in real time. New to pilates? Start with mat — <a href="/classes" class="text-clay underline underline-offset-4">explore our pilates classes</a> to find your fit.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-5">
+        {classTypes.map((c) => (
+          <a href={`/classes/${c.slug}`} class="group flex flex-col justify-between bg-paper p-6 transition hover:bg-white">
+            <div>
+              <h3 class="font-display text-lg text-ink group-hover:text-clay">{c.name}</h3>
+              <p class="mt-2 text-sm text-ink-muted">{c.blurb}</p>
+            </div>
+            <span class="mt-6 text-xs font-medium uppercase tracking-wide text-clay opacity-0 transition group-hover:opacity-100">View class →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="border-t border-line">
+    <div class="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-[0.2em] text-clay">Why Core &amp; Flow</p>
+        <h2 class="mt-3 font-display text-3xl leading-tight tracking-tight text-ink md:text-4xl">
+          Small classes. Real coaching. No mirrors to hide behind.
+        </h2>
+      </div>
+      <div class="space-y-5 text-ink-muted leading-relaxed">
+        <p>
+          We opened on South Congress with one rule: every class stays small enough that your instructor knows your name and your knees. Reformer sessions cap at 8, mat at 12 — enough energy in the room, never a crowd.
+        </p>
+        <p>
+          Our five instructors are all classically certified (500+ hour programs, not weekend certificates), and two specialize in prenatal and postnatal movement. Whether you're training for a marathon or coming back from a c-section, we'll meet you where you are.
+        </p>
+        <a href="/instructors" class="inline-block text-sm font-medium text-ink underline decoration-line underline-offset-4 hover:text-clay">
+          Meet our instructors
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA banner -->
+  <section class="border-t border-line bg-ink">
+    <div class="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 md:flex-row md:items-center md:justify-between md:py-20">
+      <div>
+        <h2 class="font-display text-3xl tracking-tight text-paper md:text-4xl">Your first class is on us to find out.</h2>
+        <p class="mt-3 max-w-md text-paper/70">Pick a time from the weekly schedule and pay securely online — your spot is confirmed instantly.</p>
+      </div>
+      <a href="/book" class="shrink-0 rounded-full bg-clay px-7 py-3.5 text-sm font-medium text-paper transition hover:bg-clay-dark">
+        Book a class
+      </a>
+    </div>
+  </section>
+
+  <!-- Quick links -->
+  <section class="border-t border-line">
+    <div class="mx-auto max-w-6xl px-6 py-16 text-sm text-ink-muted">
+      <p>
+        Curious about cost? See <a href="/pricing" class="text-clay underline underline-offset-4">class packages and pricing</a>, read what members say on our <a href="/testimonials" class="text-clay underline underline-offset-4">testimonials page</a>, or <a href="/contact" class="text-clay underline underline-offset-4">get in touch</a> with questions before your first visit.
+      </p>
+    </div>
+  </section>
+</Base>
