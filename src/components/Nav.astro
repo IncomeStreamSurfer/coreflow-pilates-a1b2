@@ -1,0 +1,47 @@
+---
+const links = [
+  { href: '/classes', label: 'Classes' },
+  { href: '/schedule', label: 'Schedule' },
+  { href: '/instructors', label: 'Instructors' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/about', label: 'About' },
+];
+---
+
+<header id="site-header" class="sticky top-0 z-50 transition-colors duration-300" data-scrolled="false">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+    <a href="/" class="font-display text-xl tracking-tight text-ink">
+      Core &amp; Flow <span class="text-clay">Pilates</span>
+    </a>
+    <nav class="hidden items-center gap-8 md:flex">
+      {links.map((l) => (
+        <a href={l.href} class="text-sm text-ink-muted transition hover:text-ink">{l.label}</a>
+      ))}
+    </nav>
+    <a href="/book" class="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper transition hover:bg-clay">
+      Book a class
+    </a>
+  </div>
+</header>
+
+<style>
+  #site-header {
+    background-color: transparent;
+  }
+  #site-header.is-scrolled {
+    background-color: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-line);
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header');
+  const onScroll = () => {
+    if (!header) return;
+    if (window.scrollY > 40) header.classList.add('is-scrolled');
+    else header.classList.remove('is-scrolled');
+  };
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
